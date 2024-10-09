@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NSSB FOOD ORDERING SYSTEM</title>
+    <style>
+        /* General Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+			background-image:url("https://png.pngtree.com/thumb_back/fh260/background/20220522/pngtree-abstract-white-and-light-gray-wave-modern-soft-luxury-texture-with-image_1379862.jpg"); }
+
+        .container {
+            padding-top: 80px; /* To prevent content overlap with the fixed header */
+            padding-bottom: 70px; /* To prevent content overlap with the fixed navbar */
+        }
+
+        /* Header styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: transparent; /* Changed to transparent */
+            padding: 10px;
+            color: white;
+            border: none; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .profile-pic {
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+        }
+
+        .logo {
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .notification {
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* Half-circle for username */
+        .half-circle {
+            position: relative;
+            width: 100%;
+            height: 150px;
+            background-color: #0C0E8B;
+            border-bottom-left-radius: 45% 100%;
+            border-bottom-right-radius: 45% 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .half-circle h2 {
+            position: relative;
+            margin: 0;
+            font-size: 24px;
+            z-index: 1;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 180px; /* Reduced width */
+            height: 100%;
+            background-color: #333;
+            color: white;
+            padding: 15px;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.visible {
+            display: block;
+            transform: translateX(0);
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 20px 0;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Navigation bar styles */
+.navbar {
+    position: fixed;
+    bottom: 20px; /* Adjusted position to give it some space from the bottom */
+    left: 50%;
+    transform: translateX(-50%); /* Center the navbar horizontally */
+    width: 100%; /* Adjust the width to make it more oval */
+    height: 40px; /* Set the height for the oval shape */
+    background-color: #0C0E8B; /* Background color */
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 0;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 30px; /* Creates the oval shape */
+    z-index: 1000;
+	
+}
+
+
+        .navbar a {
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            flex-grow: 1;
+        }
+
+        .navbar a img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .navbar a span {
+            display: block;
+            font-size: 12px;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .tasks-section {
+            margin: 20px 0;
+        }
+
+        .tasks-section h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .tasks-section h5 {
+            text-align: center;
+            color: #666;
+            font-weight: normal;
+        }
+
+        .logo1 {            
+            flex-grow: 1;
+            text-align: center;
+        } 
+
+        .h5 {
+            align-items: center;
+            font-family: Cambria, "Hoefler Text", "Liberation Serif", Times, "Times New Roman", "serif";
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Half Circle for Username -->
+<div class="half-circle">
+    <h2 id="username">Shara</h2>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar hidden" id="sidebar">
+    <ul>
+        <li><a href="#">Profile</a></li>
+        <li><a href="#">Orders</a></li>
+        <li><a href="#">Settings</a></li>
+        <li><a href="#">Logout</a></li>
+    </ul>
+</div>
+
+<!-- Oval Navigation Bar -->
+<div class="navbar">
+    <a href="#" id="homeLink">
+        <img src="pictures/home_logo.png" alt="Home">
+        <span>Home</span>
+    </a>
+    <a href="#" id="profileLink">
+        <img src="pictures/profile_icon.png" alt="Profile">
+        <span>Profile</span>
+    </a>
+    <a href="#" id="orderLink">
+        <img src="pictures/order_icon_1.png" alt="Order">
+        <span>Order</span>
+    </a>
+</div>
+
+<script>
+    // Sidebar toggle
+    document.querySelector('.half-circle').addEventListener('click', function() {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar.classList.contains('hidden')) {
+            sidebar.classList.remove('hidden');
+            sidebar.classList.add('visible');
+        } else {
+            sidebar.classList.remove('visible');
+            sidebar.classList.add('hidden');
+        }
+    });
+
+    // Swipe to close sidebar
+    let touchstartX = 0;
+    let touchendX = 0;
+
+    function checkSwipe() {
+        if (touchendX < touchstartX) { // Swipe left
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.classList.contains('visible')) {
+                sidebar.classList.remove('visible');
+                sidebar.classList.add('hidden');
+            }
+        }
+    }
+
+    document.body.addEventListener('touchstart', function(e) {
+        touchstartX = e.changedTouches[0].screenX;
+    });
+
+    document.body.addEventListener('touchend', function(e) {
+        touchendX = e.changedTouches[0].screenX;
+        checkSwipe();
+    });
+
+    // Navigation Links
+    document.getElementById('homeLink').addEventListener('click', function() {
+        window.location.href = "home.html"; // Navigate to Home Page
+    });
+
+    document.getElementById('profileLink').addEventListener('click', function() {
+        window.location.href = "profile_pg.html"; // Navigate to Profile Page
+    });
+
+    document.getElementById('orderLink').addEventListener('click', function() {
+        window.location.href = "order_pg.html"; // Navigate to Order Page
+    });
+	
+</script>
+	
+
+</body>
+</html>
